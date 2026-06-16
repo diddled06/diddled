@@ -1,1 +1,163 @@
+#BFS(queue)
+graph = {
+    'A':['B','C'],
+    'B':['D','E'],
+    'C':['F','G'],
+    'D':[],
+    'E':[],
+    'F':[],
+    'G':[]
+}
+def bfs(graph,start,target):
+    visited=[]
+    queue=[start]
+    while queue:
+        node=queue.pop(0)
+        if node not in visited:
+            print(node,end=" ")
+            visited.append(node)
+            if node==target:
+                break
+            queue.extend(graph[node])
+target=input("Enter target node: ")
+bfs(graph,'A',target)
 
+
+
+#DFS(stack)
+graph = {
+    'A':['B','C'],
+    'B':['D','E'],
+    'C':['F','G'],
+    'D':[],
+    'E':[],
+    'F':[],
+    'G':[]
+}
+def dfs(graph,start,target):
+    visited=[]
+    stack=[start]
+    while stack:
+        node=stack.pop()
+        if node not in visited:
+            print(node,end=" ")
+            visited.append(node)
+            if node==target:
+                break
+            stack.extend(reversed(graph[node]))
+target=input("Enter target node: ")
+dfs(graph,'A',target)
+
+
+
+#tower of hanoi
+def hanoi(n,source,aux,target):
+    if n==1:
+        print("Move disk 1 from",source,"to",target)
+        return
+    hanoi(n-1,source,target,aux)
+    print("Move disk",n,"from",source,"to",target)
+    hanoi(n-1,aux,source,target)
+n=3
+hanoi(n,'A','B','C')
+
+
+
+#alpha beta pruning
+import math
+def alphabeta(depth,index,maxPlayer,values,alpha,beta):
+    if depth==3:
+        return values[index]
+    if maxPlayer:
+        best=-math.inf
+        for i in range(2):
+            best=max(best,
+                     alphabeta(depth+1,index*2+i,False,values,alpha,beta))
+            alpha=max(alpha,best)
+            if beta<=alpha:
+                break
+        return best
+    else:
+        best=math.inf
+        for i in range(2):
+            best=min(best,
+                     alphabeta(depth+1,index*2+i,True,values,alpha,beta))
+            beta=min(beta,best)
+            if beta<=alpha:
+                break
+        return best
+values=[3,5,6,9,1,2,0,-1]
+print("Optimal value =",alphabeta(0,0,True,values,-math.inf,math.inf))
+
+
+
+#waterjug
+from collections import deque
+def waterjug(j1,j2,goal):
+    queue=deque([(0,0)])
+    visited=set()
+    while queue:
+        x,y=queue.popleft()
+        if (x,y) in visited:
+            continue
+        visited.add((x,y))
+        print((x,y))
+        if x==goal or y==goal:
+            print("Goal Achieved")
+            return
+        next_states=[
+            (j1,y),
+            (x,j2),
+            (0,y),
+            (x,0),
+            (0,x+y) if x+y<=j2 else (x-(j2-y),j2),
+            (x+y,0) if x+y<=j1 else (j1,y-(j1-x))
+        ]
+        for state in next_states:
+            if state not in visited:
+                queue.append(state)
+waterjug(4,3,2)
+
+
+
+#monkeybanana
+from collections import deque
+start=('Far','NotUnder','Off','Empty')
+goal=('Near','Under','On','Holding')
+queue=deque([(start,[])])
+while queue:
+    state,path=queue.popleft()
+    if state==goal:
+        print("Solution Found")
+        for p in path:
+            print(p)
+        break
+    m,c,b,h=state
+    if m=='Far':
+        queue.append((('Near',c,b,h),path+['Move to chair']))
+    if m=='Near' and c!='Under':
+        queue.append((('Near','Under',b,h),path+['Push chair']))
+    if c=='Under' and b!='On':
+        queue.append((('Near','Under','On',h),path+['Climb chair']))
+    if b=='On' and h!='Holding':
+        queue.append((('Near','Under','On','Holding'),path+['Grasp banana']))
+
+
+
+#8queens problem
+N = 8
+def safe(board, row, col):
+    for i in range(row):
+        if board[i] == col or abs(board[i]-col) == abs(i-row):
+            return False
+    return True
+def solve(board, row):
+    if row == N:
+        print(board)
+        return
+    for col in range(N):
+        if safe(board, row, col):
+            board[row] = col
+            solve(board, row+1)
+board = [-1]*N
+solve(board, 0)
