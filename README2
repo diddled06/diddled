@@ -71,8 +71,8 @@ def alphabeta(depth,index,maxPlayer,values,alpha,beta):
     if maxPlayer:
         best=-math.inf
         for i in range(2):
-            best=max(best,
-                     alphabeta(depth+1,index*2+i,False,values,alpha,beta))
+            val=alphabeta(depth+1,index*2+i,False,values,alpha,beta)
+            best=max(best,val)
             alpha=max(alpha,best)
             if beta<=alpha:
                 break
@@ -80,14 +80,15 @@ def alphabeta(depth,index,maxPlayer,values,alpha,beta):
     else:
         best=math.inf
         for i in range(2):
-            best=min(best,
-                     alphabeta(depth+1,index*2+i,True,values,alpha,beta))
+            val=alphabeta(depth+1,index*2+i,True,values,alpha,beta)
+            best=min(best,val)
             beta=min(beta,best)
             if beta<=alpha:
                 break
         return best
 values=[3,5,6,9,1,2,0,-1]
-print("Optimal value =",alphabeta(0,0,True,values,-math.inf,math.inf))
+print("Optimal value:",
+      alphabeta(0,0,True,values,-math.inf,math.inf))
 
 
 
